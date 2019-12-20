@@ -3,16 +3,30 @@
 }
 
 body {
-  background-color: #143F6B;
+  background-image: url(./assets/bg.gif);
+  background-repeat: no-repeat;
+  background-size: cover;
   margin: 0;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.4);
 }
 
 .piano {
   display: flex;
+  position: relative;
 }
 
 .key {

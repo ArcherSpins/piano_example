@@ -1,30 +1,52 @@
-const WHITE_KEYS = ['z', 'x', 'c', 'v', 'b', 'n', 'm']
-const BLACK_KEYS = ['s', 'd', 'g', 'h', 'j']
+class Piano {
+  static WHITE_KEYS = ['z', 'x', 'c', 'v', 'b', 'n', 'm'];
+  static BLACK_KEYS = ['s', 'd', 'g', 'h', 'j'];
 
-const keys = document.querySelectorAll('.key')
-const whiteKeys = document.querySelectorAll('.key.white')
-const blackKeys = document.querySelectorAll('.key.black')
+  static checkFilterKeys = (keys, filterClass) =>
+    Array.from(keys).filter(key => key.classList.contains(filterClass));
 
-keys.forEach(key => {
-  key.addEventListener('click', () => playNote(key))
-})
+  constructor(keys = []) {
+    this.keys = keys;
+    this.whiteKeys = Piano.checkFilterKeys(keys, 'white');
+    this.blackKeys = Piano.checkFilterKeys(keys, 'black');
 
-document.addEventListener('keydown', e => {
-  if (e.repeat) return
-  const key = e.key
-  const whiteKeyIndex = WHITE_KEYS.indexOf(key)
-  const blackKeyIndex = BLACK_KEYS.indexOf(key)
+    this.setEventListenerOnKeys();
+    this.setEventKeyDown();
+  }
 
-  if (whiteKeyIndex > -1) playNote(whiteKeys[whiteKeyIndex])
-  if (blackKeyIndex > -1) playNote(blackKeys[blackKeyIndex])
-})
+  playNote(key) {
+    const noteAudio = document.getElementById(key.dataset.note);
+  
+    if (noteAudio) {
+      noteAudio.currentTime = 0;
+      noteAudio.play();
+      key.classList.add('active');
+      noteAudio.addEventListener('ended', () => {
+        key.classList.remove('active');
+      });
 
-function playNote(key) {
-  const noteAudio = document.getElementById(key.dataset.note)
-  noteAudio.currentTime = 0
-  noteAudio.play()
-  key.classList.add('active')
-  noteAudio.addEventListener('ended', () => {
-    key.classList.remove('active')
-  })
+      return;
+    }
+    
+    console.error('Cannot find audio with key:', key.dataset.note);
+  }
+
+  setEventListenerOnKeys() {
+    this.keys.forEach(key => {
+      key.addEventListener('click', () => this.playNote(key))
+    });
+  }
+
+  setEventKeyDown() {
+    document.addEventListener('keydown', e => {
+      if (e.repeat) return;
+
+      const key = e.key
+      const whiteKeyIndex = Piano.WHITE_KEYS.indexOf(key)
+      const blackKeyIndex = Piano.BLACK_KEYS.indexOf(key)
+    
+      if (whiteKeyIndex > -1) this.playNote(whiteKeys[whiteKeyIndex])
+      if (blackKeyIndex > -1) this.playNote(blackKeys[blackKeyIndex])
+    })
+  }
 }
